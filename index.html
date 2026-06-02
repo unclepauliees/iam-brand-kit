@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IAM — Brand Identity System</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Playfair+Display:wght@400;700&family=DM+Mono:wght@400&family=Montserrat:wght@200;300;400&display=swap');
+
+    :root {
+      --black: #0A0A0A;
+      --white: #F5F5F0;
+      --obsidian: #1A1A1A;
+      --platinum: #C8C8C0;
+      --gold: #B8A882;
+      --charcoal: #2D2D2D;
+      --easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --duration-fast: 300ms;
+      --duration-base: 500ms;
+      --duration-slow: 700ms;
+      --bg: #0A0A0A;
+      --bg-2: #1A1A1A;
+      --bg-3: #2D2D2D;
+      --text: #F5F5F0;
+      --muted: #C8C8C0;
+      --sidebar-bg: #1A1A1A;
+    }
+
+    [data-theme="light"] {
+      --bg: #F5F5F0;
+      --bg-2: #E8E8E3;
+      --bg-3: #D8D8D3;
+      --text: #0A0A0A;
+      --muted: #6A6A62;
+      --sidebar-bg: #E0E0DB;
+      --platinum: #6A6A62;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+      margin-left: 48px;
+      transition: background var(--duration-base) var(--easing), color var(--duration-base) var(--easing);
+      overflow-x: hidden;
+    }
+
+    section { padding: 120px 80px; position: relative; }
+
+    .section-label {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 200;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      margin-bottom: 64px;
+      display: block;
+    }
+
+    hr.hairline {
+      border: none;
+      border-top: 0.5px solid var(--platinum);
+      width: 100%;
+      margin: 0;
+    }
+
+    /* ─── SIDEBAR ─── */
+    #sidebar {
+      position: fixed; left: 0; top: 0; width: 48px; height: 100vh;
+      background: var(--sidebar-bg);
+      z-index: 100;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px;
+      transition: background var(--duration-base) var(--easing);
+    }
+
+    .nav-dot-wrap { position: relative; cursor: pointer; padding: 8px; }
+
+    .nav-dot {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--platinum);
+      transition: background var(--duration-fast) var(--easing), transform var(--duration-fast) var(--easing);
+    }
+
+    .nav-dot-wrap.active .nav-dot { background: var(--gold); transform: scale(1.75); }
+
+    .nav-tooltip {
+      position: absolute; left: 32px; top: 50%; transform: translateY(-50%);
+      background: var(--bg-2); color: var(--text);
+      font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; letter-spacing: 0.15em;
+      padding: 6px 14px; white-space: nowrap;
+      opacity: 0; pointer-events: none;
+      transition: opacity var(--duration-fast) var(--easing);
+      border: 0.5px solid var(--bg-3);
+    }
+
+    .nav-dot-wrap:hover .nav-tooltip { opacity: 1; }
+
+    /* ─── THEME TOGGLE ─── */
+    #theme-toggle {
+      position: fixed; top: 24px; right: 24px; z-index: 200;
+      background: transparent; border: 0.5px solid var(--muted); color: var(--muted);
+      font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; letter-spacing: 0.2em;
+      padding: 8px 16px; cursor: pointer;
+      transition: all var(--duration-fast) var(--easing);
+    }
+    #theme-toggle:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ─── REVEAL ─── */
+    [data-reveal] {
+      opacity: 0; transform: translateY(16px);
+      transition: opacity var(--duration-slow) var(--easing), transform var(--duration-slow) var(--easing);
+    }
+    [data-reveal].is-visible { opacity: 1; transform: translateY(0); }
+    [data-reveal][data-delay="1"] { transition-delay: 80ms; }
+    [data-reveal][data-delay="2"] { transition-delay: 160ms; }
+    [data-reveal][data-delay="3"] { transition-delay: 240ms; }
+    [data-reveal][data-delay="4"] { transition-delay: 320ms; }
+    [data-reveal][data-delay="5"] { transition-delay: 480ms; }
+
+    /* ─── S1: HERO ─── */
+    #s1 {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 0; background: #0A0A0A; gap: 40px; position: relative;
+    }
+    .hero-logo { width: 520px; max-width: 82vw; animation: hfade 600ms var(--easing) both; }
+    .hero-logo svg { width: 100%; height: auto; display: block; }
+    .hero-subtitle {
+      font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 11px;
+      color: #C8C8C0; letter-spacing: 0.35em; text-transform: uppercase;
+      animation: hfade 600ms var(--easing) 900ms both;
+    }
+    .hero-quote {
+      font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 22px;
+      color: #F5F5F0; text-align: center; max-width: 540px;
+      animation: hfade 600ms var(--easing) 1400ms both;
+    }
+    .hero-rule { position: absolute; bottom: 0; left: 0; right: 0; height: 0.5px; background: #C8C8C0; }
+    @keyframes hfade { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ─── S2: PHILOSOPHY ─── */
+    #s2 { background: var(--bg); }
+    .philosophy-grid { display: grid; grid-template-columns: 55fr 45fr; gap: 80px; align-items: start; }
+    .philosophy-left { position: relative; padding-left: 32px; }
+    .philosophy-left::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--platinum);
+    }
+    .philosophy-pullquote {
+      font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 38px;
+      line-height: 1.25; color: var(--text);
+    }
+    .pillar {
+      display: flex; align-items: center; gap: 16px; padding: 28px 0;
+      border-top: 0.5px solid var(--bg-3);
+      font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 12px;
+      letter-spacing: 0.1em; color: var(--text);
+    }
+    .pillar:last-child { border-bottom: 0.5px solid var(--bg-3); }
+    .pillar-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+    /* ─── S3: LOGO SYSTEM ─── */
+    #s3 { background: var(--bg); }
+    .logo-panel { padding: 60px; margin-bottom: 4px; position: relative; }
+    .logo-panel-dark { background: #0A0A0A; }
+    .logo-panel-light { background: #F5F5F0; }
+    .logo-panel-label {
+      position: absolute; bottom: 20px; left: 60px;
+      font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px;
+      letter-spacing: 0.3em; text-transform: uppercase;
+    }
+    .logo-panel-dark .logo-panel-label { color: #C8C8C0; }
+    .logo-panel-light .logo-panel-label { color: #6A6A62; }
+    .logo-embed { display: block; width: 100%; max-width: 620px; margin: 0 auto 48px; }
+    .logo-embed svg { width: 100%; height: auto; display: block; }
+    .logo-embed-sm { display: block; width: 200px; margin: 0 auto 48px; }
+    .logo-embed-sm svg { width: 100%; height: auto; display: block; }
+
+    .clearspace-center { display: flex; justify-content: center; margin-bottom: 48px; }
+    .clearspace-wrap { position: relative; display: inline-block; padding: 52px; }
+    .clearspace-logo { display: block; width: 280px; }
+    .clearspace-logo svg { width: 100%; height: auto; display: block; }
+    .clearspace-box {
+      position: absolute; inset: 0; border: 1px dashed var(--gold);
+      animation: cspulse 2.5s ease-in-out infinite;
+    }
+    @keyframes cspulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .cs-label {
+      position: absolute; font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 9px;
+      color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    .cs-label-top { top: 4px; left: 50%; transform: translateX(-50%); }
+    .cs-label-bottom { bottom: 4px; left: 50%; transform: translateX(-50%); }
+    .cs-label-left { left: 4px; top: 50%; transform: translateY(-50%) rotate(-90deg); transform-origin: center; }
+    .cs-label-right { right: 4px; top: 50%; transform: translateY(-50%) rotate(90deg); transform-origin: center; }
+
+    .prohibited-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-bottom: 4px; }
+    .prohibited-panel {
+      background: var(--bg-2); padding: 40px 20px 56px;
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .prohibited-panel::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to bottom right,
+        transparent calc(50% - 0.75px),
+        #C0392B calc(50% - 0.75px), #C0392B calc(50% + 0.75px),
+        transparent calc(50% + 0.75px));
+      pointer-events: none; z-index: 2;
+    }
+    .prohibited-logo { width: 120px; }
+    .prohibited-logo svg { width: 100%; height: auto; display: block; }
+    .prohibited-label {
+      position: absolute; bottom: 14px; left: 0; right: 0; text-align: center;
+      font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 9px;
+      letter-spacing: 0.15em; color: #C0392B; text-transform: uppercase; z-index: 3;
+    }
+
+    /* ─── S4: COLOR SYSTEM ─── */
+    #s4 { background: var(--bg); }
+    .swatches-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-bottom: 80px; }
+    .swatch { cursor: pointer; position: relative; overflow: hidden; user-select: none; }
+    .swatch-color { height: 160px; display: flex; align-items: flex-start; padding: 16px; }
+    .swatch-copied {
+      font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 9px; letter-spacing: 0.3em;
+      color: var(--gold); opacity: 0; transition: opacity var(--duration-fast) var(--easing);
+    }
+    .swatch.copied .swatch-copied { opacity: 1; }
+    .swatch-info { padding: 20px 24px; background: var(--bg-2); }
+    .swatch-name { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 13px; color: var(--text); margin-bottom: 8px; }
+    .swatch-hex { font-family: 'DM Mono', monospace; font-size: 14px; color: var(--text); margin-bottom: 4px; }
+    .swatch-rgb { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+    .swatch-usage { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; color: var(--muted); line-height: 1.5; }
+
+    .color-combos { display: flex; flex-direction: column; gap: 2px; margin-bottom: 80px; }
+    .combo-bar { height: 88px; display: flex; align-items: center; padding: 0 48px; justify-content: space-between; }
+    .combo-specimen { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 400; }
+    .combo-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .combo-label { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; letter-spacing: 0.2em; }
+    .combo-wcag { font-family: 'DM Mono', monospace; font-size: 11px; }
+
+    .brand-moment { background: #0A0A0A; border-top: 1px solid #B8A882; padding: 72px 80px; }
+    .bm-label { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; color: #C8C8C0; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 36px; }
+    .bm-headline { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 52px; color: #F5F5F0; margin-bottom: 28px; line-height: 1.15; }
+    .bm-body { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 18px; color: #C8C8C0; max-width: 560px; line-height: 1.7; }
+
+    /* ─── S5: TYPOGRAPHY ─── */
+    #s5 { background: var(--bg); }
+    .type-scale { display: flex; flex-direction: column; gap: 0; margin-bottom: 80px; }
+    .type-row {
+      display: flex; align-items: baseline; justify-content: space-between;
+      padding: 28px 0; border-top: 0.5px solid var(--bg-3); gap: 32px;
+    }
+    .type-specimen { flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .type-meta { text-align: right; flex-shrink: 0; }
+    .type-meta-name { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; color: var(--muted); letter-spacing: 0.2em; display: block; margin-bottom: 3px; }
+    .type-meta-spec { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--bg-3 == '#2D2D2D' ? var(--muted) : var(--muted)); }
+
+    .typeface-cards { display: flex; flex-direction: column; gap: 2px; margin-bottom: 80px; }
+    .typeface-card { background: var(--bg-2); padding: 40px; display: grid; grid-template-columns: 1fr 260px; gap: 48px; align-items: center; }
+    .tf-specimen { font-size: 26px; color: var(--text); line-height: 1.5; word-break: break-all; }
+    .tf-meta-name { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 14px; color: var(--text); margin-bottom: 8px; }
+    .tf-meta-weights { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 12px; }
+    .tf-meta-role { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
+
+    .type-comp { background: var(--bg-2); padding: 80px; }
+    .tc-label { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; color: var(--muted); letter-spacing: 0.4em; text-transform: uppercase; margin-bottom: 40px; }
+    .tc-headline { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 62px; color: var(--text); line-height: 1.1; margin-bottom: 16px; }
+    .tc-subhead { font-family: 'Playfair Display', serif; font-weight: 400; font-size: 24px; color: var(--text); margin-bottom: 32px; }
+    .tc-body { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 18px; color: var(--muted); line-height: 1.7; max-width: 600px; margin-bottom: 32px; }
+    .tc-data { font-family: 'DM Mono', monospace; font-size: 14px; color: var(--gold); margin-bottom: 20px; }
+    .tc-caption { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; color: var(--muted); letter-spacing: 0.25em; text-transform: uppercase; }
+
+    /* ─── S6: VOICE ─── */
+    #s6 { background: var(--bg); }
+    .voice-grid { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 60px; margin-bottom: 80px; align-items: start; }
+    .voice-divider { background: var(--platinum); }
+    .voice-col-label { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; letter-spacing: 0.4em; color: var(--muted); text-transform: uppercase; margin-bottom: 40px; display: block; }
+    .voice-item { padding: 20px 0; border-bottom: 0.5px solid var(--bg-3); font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 18px; line-height: 1.5; }
+    .voice-say .voice-item { color: var(--text); }
+    .voice-never .voice-item { color: var(--muted); }
+
+    .spectrum { display: flex; flex-direction: column; gap: 36px; margin-top: 40px; }
+    .spectrum-row { display: flex; align-items: center; gap: 28px; }
+    .s-label { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; white-space: nowrap; width: 130px; }
+    .s-label-r { text-align: right; }
+    .s-track { flex: 1; height: 1px; background: var(--bg-3); position: relative; }
+    .s-fill { position: absolute; left: 0; top: -1px; height: 3px; background: var(--platinum); }
+    .s-dot { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); top: -4px; transform: translateX(-50%); }
+
+    /* ─── S7: MOTION ─── */
+    #s7 { background: var(--bg); }
+    .motion-table { width: 100%; border-collapse: collapse; margin-bottom: 80px; }
+    .motion-table td { padding: 20px 0; border-top: 0.5px solid var(--bg-3); vertical-align: top; }
+    .motion-table td:first-child { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; width: 110px; padding-top: 22px; }
+    .motion-table td:last-child { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text); }
+
+    .easing-viz { display: flex; justify-content: center; align-items: center; margin-bottom: 80px; }
+    .easing-wrap { background: var(--bg-2); padding: 48px; }
+
+    .motion-demos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .md-card { background: var(--bg-2); padding: 64px 40px; display: flex; flex-direction: column; align-items: center; gap: 32px; }
+    .md-label { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase; text-align: center; }
+
+    .demo-btn {
+      font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 10px; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--text); border: 0.5px solid var(--muted); padding: 14px 32px;
+      background: transparent; cursor: pointer;
+      transition: background 400ms var(--easing), border-color 400ms var(--easing), color 400ms var(--easing);
+    }
+    .demo-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--black); }
+
+    .demo-card-box {
+      width: 160px; height: 100px; background: var(--bg-3); cursor: default;
+      transition: transform 500ms var(--easing);
+      border: 0.5px solid var(--bg-3);
+    }
+    .demo-card-box:hover { transform: translateY(-4px); }
+
+    .demo-trigger {
+      font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; letter-spacing: 0.3em;
+      color: var(--gold); cursor: pointer; text-transform: uppercase;
+      border: 0.5px solid var(--gold); padding: 10px 24px; background: transparent;
+    }
+    .demo-reveal-text { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 20px; color: var(--text); text-align: center; line-height: 1.6; min-height: 3em; }
+
+    /* ─── S8: APPLICATIONS ─── */
+    #s8 { background: var(--bg); }
+    .app-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 2px; }
+    .app-panel { background: var(--bg-2); padding: 60px; }
+    .app-panel-label { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase; margin-bottom: 40px; display: block; }
+
+    /* Business card */
+    .bcard-scene { perspective: 1000px; width: 340px; height: 190px; margin: 0 auto; }
+    .bcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 700ms var(--easing); }
+    .bcard-scene:hover .bcard { transform: rotateY(180deg); }
+    .bcard-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .bcard-front { background: #0A0A0A; display: flex; align-items: center; justify-content: center; border: 0.5px solid #2D2D2D; }
+    .bcard-front-text { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 8px; color: #C8C8C0; letter-spacing: 0.3em; text-transform: uppercase; text-align: center; }
+    .bcard-back { background: #F5F5F0; transform: rotateY(180deg); padding: 24px 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .bcard-back-logo { width: 100px; margin-bottom: 14px; }
+    .bcard-back-logo svg { width: 100%; height: auto; display: block; }
+    .bcard-rule { width: 100%; height: 0.5px; background: #C8C8C0; margin-bottom: 14px; }
+    .bcard-name { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 11px; color: #0A0A0A; margin-bottom: 4px; }
+    .bcard-contact { font-family: 'DM Mono', monospace; font-size: 9px; color: #6A6A62; }
+    .bcard-hint { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 9px; color: var(--muted); letter-spacing: 0.15em; text-align: center; margin-top: 16px; }
+
+    /* Memo pad */
+    .memo { background: #F5F5F0; overflow: hidden; max-width: 480px; margin: 0 auto; }
+    .memo-header { background: #0A0A0A; padding: 16px 24px; font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 9px; color: #C8C8C0; letter-spacing: 0.3em; text-transform: uppercase; }
+    .memo-body { padding: 40px 24px 32px; }
+    .memo-hed { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 26px; color: #0A0A0A; margin-bottom: 16px; }
+    .memo-lines { display: flex; flex-direction: column; gap: 12px; }
+    .memo-line { height: 0.5px; background: #C8C8C0; }
+    .memo-footer { padding: 12px 24px; border-top: 0.5px solid #C8C8C0; font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 8px; color: #6A6A62; letter-spacing: 0.15em; }
+
+    /* Email signature */
+    .esig { background: #0A0A0A; border: 0.5px solid #2D2D2D; padding: 40px; max-width: 480px; margin: 0 auto; }
+    .esig-name { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 16px; color: #F5F5F0; margin-bottom: 4px; }
+    .esig-title { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 11px; color: #C8C8C0; letter-spacing: 0.1em; margin-bottom: 24px; }
+    .esig-rule { height: 1px; background: #B8A882; margin-bottom: 24px; }
+    .esig-company { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: #F5F5F0; margin-bottom: 6px; }
+    .esig-loc { font-family: 'DM Mono', monospace; font-size: 11px; color: #C8C8C0; }
+
+    /* Deck cover */
+    .deck { aspect-ratio: 16/9; background: #0A0A0A; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 40px; }
+    .deck-logo { width: 36%; margin-bottom: 28px; }
+    .deck-logo svg { width: 100%; height: auto; display: block; }
+    .deck-rule { width: 100%; max-width: 440px; height: 0.5px; background: #C8C8C0; margin-bottom: 24px; }
+    .deck-label { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 9px; color: #C8C8C0; letter-spacing: 0.3em; text-transform: uppercase; text-align: center; }
+
+    /* Letterhead */
+    .lh-wrap { max-width: 420px; margin: 0 auto; }
+    .lh { background: #F5F5F0; aspect-ratio: 210/297; padding: 36px; display: flex; flex-direction: column; }
+    .lh-header { display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 18px; border-bottom: 0.5px solid #C8C8C0; margin-bottom: auto; }
+    .lh-logo { width: 110px; }
+    .lh-logo svg { width: 100%; height: auto; display: block; }
+    .lh-address { font-family: 'DM Mono', monospace; font-size: 8px; color: #6A6A62; text-align: right; line-height: 1.9; }
+    .lh-content { flex: 1; display: flex; align-items: center; justify-content: center; }
+    .lh-content-inner { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 13px; color: #C8C8C0; font-style: italic; }
+    .lh-footer { padding-top: 14px; border-top: 0.5px solid #C8C8C0; text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 7px; color: #6A6A62; letter-spacing: 0.25em; text-transform: uppercase; }
+
+    /* ─── S9: GRAPHIC ELEMENTS ─── */
+    #s9 { background: var(--bg); }
+    .triangle-motif { display: flex; align-items: flex-end; gap: 56px; margin-bottom: 80px; }
+    .tri-item { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .tri-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+
+    .texture-panel { position: relative; overflow: hidden; background: var(--bg-2); padding: 80px; margin-bottom: 80px; min-height: 320px; }
+    .texture-bg-svg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; overflow: hidden; }
+    .texture-bg-svg svg { width: 300%; height: auto; opacity: 0.07; }
+    .texture-content { position: relative; z-index: 1; }
+    .tc-over-label { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; color: var(--muted); letter-spacing: 0.4em; text-transform: uppercase; margin-bottom: 24px; }
+    .tc-over-head { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 42px; color: var(--text); margin-bottom: 16px; }
+    .tc-over-body { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 18px; color: var(--muted); line-height: 1.65; max-width: 540px; }
+
+    .icons-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; }
+    .icon-item { background: var(--bg-2); padding: 36px 16px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .icon-label { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 9px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; text-align: center; }
+
+    /* ─── S10: CLOSING ─── */
+    #s10 {
+      min-height: 100vh; background: #0A0A0A;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 120px 80px;
+    }
+    .cl-section-label { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 10px; color: #C8C8C0; letter-spacing: 0.5em; text-transform: uppercase; margin-bottom: 28px; }
+    .cl-top-rule { width: 100%; max-width: 480px; height: 0.5px; background: #C8C8C0; margin: 0 auto 96px; }
+    .cl-quote-main { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 58px; color: #F5F5F0; line-height: 1.2; margin-bottom: 48px; }
+    .cl-gold-rule { width: 400px; height: 1px; background: #B8A882; margin: 0 auto 48px; }
+    .cl-quote-sec { font-family: 'Cormorant Garamond', serif; font-weight: 400; font-style: italic; font-size: 28px; color: #F5F5F0; margin-bottom: 96px; }
+    .cl-meta { font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 11px; color: #C8C8C0; letter-spacing: 0.3em; }
+
+    /* ─── MOBILE NAV ─── */
+    #mob-toggle {
+      display: none; position: fixed; top: 16px; left: 12px; z-index: 300;
+      background: var(--bg-2); border: 0.5px solid var(--bg-3); padding: 12px;
+      cursor: pointer; flex-direction: column; gap: 5px;
+    }
+    .hline { width: 20px; height: 0.5px; background: var(--muted); }
+    #mob-nav {
+      display: none; position: fixed; inset: 0; background: var(--bg-2); z-index: 250;
+      flex-direction: column; align-items: flex-start; justify-content: center; padding: 64px;
+    }
+    #mob-nav.open { display: flex; }
+    .mob-nav-close { position: absolute; top: 24px; right: 24px; font-family: 'Montserrat', sans-serif; font-weight: 200; font-size: 11px; color: var(--muted); letter-spacing: 0.2em; cursor: pointer; background: none; border: none; }
+    .mob-nav-link { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 32px; color: var(--text); padding: 10px 0; cursor: pointer; display: block; text-decoration: none; transition: color var(--duration-fast) var(--easing); }
+    .mob-nav-link:hover { color: var(--gold); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      body { margin-left: 0; }
+      #sidebar { display: none; }
+      #mob-toggle { display: flex; }
+      section { padding: 80px 24px; }
+      .philosophy-grid { grid-template-columns: 1fr; gap: 48px; }
+      .swatches-grid { grid-template-columns: 1fr 1fr; }
+      .prohibited-grid { grid-template-columns: repeat(2, 1fr); }
+      .icons-grid { grid-template-columns: repeat(3, 1fr); }
+      .motion-demos, .md-card { grid-template-columns: 1fr; }
+      .app-grid-2 { grid-template-columns: 1fr; }
+      .typeface-card { grid-template-columns: 1fr; }
+      .voice-grid { grid-template-columns: 1fr; }
+      .voice-divider { display: none; }
+      .cl-quote-main { font-size: 36px; }
+      .hero-logo { width: 90vw; }
+      .type-comp { padding: 40px 24px; }
+      .logo-panel { padding: 40px 24px 64px; }
+      .logo-panel-label { left: 24px; }
+      .bcard-scene { width: 100%; max-width: 340px; }
+      .triangle-motif { gap: 32px; }
+      .brand-moment { padding: 48px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ━━━ SIDEBAR ━━━ -->
+<nav id="sidebar"></nav>
+
+<!-- ━━━ MOBILE TOGGLE ━━━ -->
+<button id="mob-toggle" aria-label="Open navigation">
+  <span class="hline"></span><span class="hline"></span><span class="hline"></span>
+</button>
+<div id="mob-nav">
+  <button class="mob-nav-close" id="mob-close">CLOSE</button>
+  <a class="mob-nav-link" href="#s1">01 &nbsp; Cover</a>
+  <a class="mob-nav-link" href="#s2">02 &nbsp; Philosophy</a>
+  <a class="mob-nav-link" href="#s3">03 &nbsp; Logo System</a>
+  <a class="mob-nav-link" href="#s4">04 &nbsp; Color</a>
+  <a class="mob-nav-link" href="#s5">05 &nbsp; Typography</a>
+  <a class="mob-nav-link" href="#s6">06 &nbsp; Voice &amp; Tone</a>
+  <a class="mob-nav-link" href="#s7">07 &nbsp; Motion</a>
+  <a class="mob-nav-link" href="#s8">08 &nbsp; Applications</a>
+  <a class="mob-nav-link" href="#s9">09 &nbsp; Graphic Elements</a>
+  <a class="mob-nav-link" href="#s10">10 &nbsp; Closing</a>
+</div>
+
+<!-- ━━━ THEME TOGGLE ━━━ -->
+<button id="theme-toggle">LIGHT MODE</button>
+
+<!-- ══════════════════════════════════════════
+     SECTION 1 — COVER / HERO
+══════════════════════════════════════════════ -->
+<section id="s1" data-section="1">
+  <div class="hero-logo" data-logo="dark"></div>
+  <p class="hero-subtitle">Brand Identity System · May 2026</p>
+  <p class="hero-quote">"We do not pitch talent. We select talent."</p>
+  <div class="hero-rule"></div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 2 — BRAND PHILOSOPHY
+══════════════════════════════════════════════ -->
+<section id="s2" data-section="2">
+  <span class="section-label" data-reveal>Philosophy</span>
+  <div class="philosophy-grid">
+    <div class="philosophy-left" data-reveal data-delay="1">
+      <p class="philosophy-pullquote">"The most valuable thing talent owns is not their talent. It is the trust their audience places in them."</p>
+    </div>
+    <div data-reveal data-delay="2">
+      <div class="pillar"><span class="pillar-dot"></span><span>01 · STRUCTURE OVER CAMPAIGN</span></div>
+      <div class="pillar"><span class="pillar-dot"></span><span>02 · EQUITY OVER COMMISSION</span></div>
+      <div class="pillar"><span class="pillar-dot"></span><span>03 · LEGACY OVER TRANSACTION</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 3 — LOGO SYSTEM
+══════════════════════════════════════════════ -->
+<section id="s3" data-section="3">
+  <span class="section-label" data-reveal>Logo System</span>
+
+  <!-- 3a Primary Dark -->
+  <div data-reveal data-delay="1">
+    <div class="logo-panel logo-panel-dark" style="padding-bottom:80px;">
+      <div class="logo-embed" data-logo="dark"></div>
+      <span class="logo-panel-label">Primary · Dark Background</span>
+    </div>
+  </div>
+
+  <!-- 3b Reverse Light -->
+  <div data-reveal data-delay="1" style="margin-top:4px;">
+    <div class="logo-panel logo-panel-light" style="padding-bottom:80px;">
+      <div class="logo-embed" data-logo="light"></div>
+      <span class="logo-panel-label">Reverse · Light Background</span>
+    </div>
+  </div>
+
+  <!-- 3c Compact -->
+  <div data-reveal data-delay="2" style="margin-top:4px;">
+    <div class="logo-panel logo-panel-dark" style="padding-bottom:80px;">
+      <div class="logo-embed-sm" data-logo="dark"></div>
+      <span class="logo-panel-label">Compact · Minimum 120px Width</span>
+    </div>
+  </div>
+
+  <!-- 3d Clear Space -->
+  <div data-reveal data-delay="2" style="margin-top:4px;">
+    <div class="logo-panel logo-panel-dark" style="padding-bottom:80px; text-align:center;">
+      <div class="clearspace-center">
+        <div class="clearspace-wrap">
+          <div class="clearspace-logo" data-logo="dark"></div>
+          <div class="clearspace-box"></div>
+          <span class="cs-label cs-label-top">1× I-HEIGHT</span>
+          <span class="cs-label cs-label-bottom">1× I-HEIGHT</span>
+          <span class="cs-label cs-label-left">1×</span>
+          <span class="cs-label cs-label-right">1×</span>
+        </div>
+      </div>
+      <span class="logo-panel-label">Clear Space · Minimum 1× Height of "I" Letterform on All Sides</span>
+    </div>
+  </div>
+
+  <!-- 3e Prohibited Uses -->
+  <div data-reveal data-delay="3" style="margin-top:4px;">
+    <div class="prohibited-grid">
+      <div class="prohibited-panel">
+        <div class="prohibited-logo" data-logo="prohibited-stretch"></div>
+        <span class="prohibited-label">Do Not Stretch</span>
+      </div>
+      <div class="prohibited-panel" style="background:#808080;">
+        <div class="prohibited-logo" data-logo="dark"></div>
+        <span class="prohibited-label">Do Not Use on Mid-Tone</span>
+      </div>
+      <div class="prohibited-panel">
+        <div class="prohibited-logo" data-logo="prohibited-shadow"></div>
+        <span class="prohibited-label">Do Not Add Effects</span>
+      </div>
+      <div class="prohibited-panel">
+        <div class="prohibited-logo" data-logo="prohibited-rotate"></div>
+        <span class="prohibited-label">Do Not Rotate</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 4 — COLOR SYSTEM
+══════════════════════════════════════════════ -->
+<section id="s4" data-section="4">
+  <span class="section-label" data-reveal>Color System</span>
+
+  <!-- 4a Swatches -->
+  <div class="swatches-grid" data-reveal data-delay="1">
+    <div class="swatch" data-hex="#0A0A0A">
+      <div class="swatch-color" style="background:#0A0A0A; border:0.5px solid #2D2D2D;">
+        <span class="swatch-copied">COPIED</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Primary Black</div>
+        <div class="swatch-hex">#0A0A0A</div>
+        <div class="swatch-rgb">RGB 10, 10, 10</div>
+        <div class="swatch-usage">Backgrounds, primary surfaces</div>
+      </div>
+    </div>
+    <div class="swatch" data-hex="#F5F5F0">
+      <div class="swatch-color" style="background:#F5F5F0;">
+        <span class="swatch-copied" style="color:#B8A882;">COPIED</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Primary White</div>
+        <div class="swatch-hex">#F5F5F0</div>
+        <div class="swatch-rgb">RGB 245, 245, 240</div>
+        <div class="swatch-usage">Text on dark, reverse backgrounds</div>
+      </div>
+    </div>
+    <div class="swatch" data-hex="#1A1A1A">
+      <div class="swatch-color" style="background:#1A1A1A;">
+        <span class="swatch-copied">COPIED</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Obsidian</div>
+        <div class="swatch-hex">#1A1A1A</div>
+        <div class="swatch-rgb">RGB 26, 26, 26</div>
+        <div class="swatch-usage">Secondary surfaces, card fills</div>
+      </div>
+    </div>
+    <div class="swatch" data-hex="#C8C8C0">
+      <div class="swatch-color" style="background:#C8C8C0;">
+        <span class="swatch-copied" style="color:#B8A882;">COPIED</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Platinum</div>
+        <div class="swatch-hex">#C8C8C0</div>
+        <div class="swatch-rgb">RGB 200, 200, 192</div>
+        <div class="swatch-usage">Dividers, secondary text, rules</div>
+      </div>
+    </div>
+    <div class="swatch" data-hex="#B8A882">
+      <div class="swatch-color" style="background:#B8A882;">
+        <span class="swatch-copied" style="color:#0A0A0A;">COPIED</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Gold Accent</div>
+        <div class="swatch-hex">#B8A882</div>
+        <div class="swatch-rgb">RGB 184, 168, 130</div>
+        <div class="swatch-usage">Premium moments, earned highlights only</div>
+      </div>
+    </div>
+    <div class="swatch" data-hex="#2D2D2D">
+      <div class="swatch-color" style="background:#2D2D2D;">
+        <span class="swatch-copied">COPIED</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">Deep Charcoal</div>
+        <div class="swatch-hex">#2D2D2D</div>
+        <div class="swatch-rgb">RGB 45, 45, 45</div>
+        <div class="swatch-usage">Tertiary surfaces, nested cards</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4b Color Combinations -->
+  <div data-reveal data-delay="2">
+    <span class="section-label" style="margin-bottom:24px;">Approved Pairings</span>
+    <div class="color-combos">
+      <div class="combo-bar" style="background:#0A0A0A;">
+        <span class="combo-specimen" style="color:#F5F5F0; font-family:'Cormorant Garamond',serif;">Aa</span>
+        <div class="combo-meta">
+          <span class="combo-label" style="color:#C8C8C0; font-family:'Montserrat',sans-serif;">Black + White · Primary</span>
+          <span class="combo-wcag" style="color:#B8A882; font-family:'DM Mono',monospace;">WCAG AAA ✓ ~19:1</span>
+        </div>
+      </div>
+      <div class="combo-bar" style="background:#1A1A1A;">
+        <span class="combo-specimen" style="color:#C8C8C0; font-family:'Cormorant Garamond',serif;">Aa</span>
+        <div class="combo-meta">
+          <span class="combo-label" style="color:#C8C8C0; font-family:'Montserrat',sans-serif;">Obsidian + Platinum · Secondary</span>
+          <span class="combo-wcag" style="color:#B8A882; font-family:'DM Mono',monospace;">WCAG AAA ✓ ~11:1</span>
+        </div>
+      </div>
+      <div class="combo-bar" style="background:#0A0A0A;">
+        <span class="combo-specimen" style="color:#B8A882; font-family:'Cormorant Garamond',serif;">Aa</span>
+        <div class="combo-meta">
+          <span class="combo-label" style="color:#C8C8C0; font-family:'Montserrat',sans-serif;">Black + Gold · Premium</span>
+          <span class="combo-wcag" style="color:#B8A882; font-family:'DM Mono',monospace;">WCAG AA ✓ ~5:1</span>
+        </div>
+      </div>
+      <div class="combo-bar" style="background:#2D2D2D;">
+        <span class="combo-specimen" style="color:#F5F5F0; font-family:'Cormorant Garamond',serif;">Aa</span>
+        <div class="combo-meta">
+          <span class="combo-label" style="color:#C8C8C0; font-family:'Montserrat',sans-serif;">Charcoal + White · Content</span>
+          <span class="combo-wcag" style="color:#B8A882; font-family:'DM Mono',monospace;">WCAG AAA ✓ ~12:1</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4c Brand Moment -->
+  <div data-reveal data-delay="3">
+    <div class="brand-moment">
+      <div class="bm-label">Brand Moment · System in Context</div>
+      <div class="bm-headline">Intellectual Capital<br>Is the New Asset Class.</div>
+      <div class="bm-body">IAM structures co-ownership vehicles, loyalty equity, and long-horizon brand equity for the most culturally significant talent of this generation. We arrive with a term sheet, not a pitch.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 5 — TYPOGRAPHY
+══════════════════════════════════════════════ -->
+<section id="s5" data-section="5">
+  <span class="section-label" data-reveal>Typography</span>
+
+  <!-- 5a Type Scale -->
+  <div class="type-scale" data-reveal data-delay="1">
+    <div class="type-row">
+      <span class="type-specimen" style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:72px;line-height:1;">A New Asset Class</span>
+      <div class="type-meta">
+        <span class="type-meta-name">Display XL</span>
+        <span class="type-meta-spec" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">Cormorant 300 · 72px</span>
+      </div>
+    </div>
+    <div class="type-row">
+      <span class="type-specimen" style="font-family:'Cormorant Garamond',serif;font-weight:400;font-size:52px;line-height:1.1;">We Select Talent</span>
+      <div class="type-meta">
+        <span class="type-meta-name">Display L</span>
+        <span class="type-meta-spec" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">Cormorant 400 · 52px</span>
+      </div>
+    </div>
+    <div class="type-row">
+      <span class="type-specimen" style="font-family:'Playfair Display',serif;font-weight:700;font-size:38px;line-height:1.15;">The Economic Model</span>
+      <div class="type-meta">
+        <span class="type-meta-name">H1</span>
+        <span class="type-meta-spec" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">Playfair 700 · 38px</span>
+      </div>
+    </div>
+    <div class="type-row">
+      <span class="type-specimen" style="font-family:'Playfair Display',serif;font-weight:400;font-size:28px;">Brand Philosophy</span>
+      <div class="type-meta">
+        <span class="type-meta-name">H2</span>
+        <span class="type-meta-spec" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">Playfair 400 · 28px</span>
+      </div>
+    </div>
+    <div class="type-row">
+      <span class="type-specimen" style="font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;line-height:1.7;">IAM structures co-ownership vehicles, loyalty equity, and long-horizon brand equity.</span>
+      <div class="type-meta">
+        <span class="type-meta-name">Body</span>
+        <span class="type-meta-spec" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">Cormorant 400 · 18px</span>
+      </div>
+    </div>
+    <div class="type-row">
+      <span class="type-specimen" style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:13px;letter-spacing:0.1em;">LOS ANGELES · NEW YORK</span>
+      <div class="type-meta">
+        <span class="type-meta-name">Caption</span>
+        <span class="type-meta-spec" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">Montserrat 300 · 13px</span>
+      </div>
+    </div>
+    <div class="type-row">
+      <span class="type-specimen" style="font-family:'Montserrat',sans-serif;font-weight:200;font-size:10px;letter-spacing:0.35em;">STRICTLY CONFIDENTIAL</span>
+      <div class="type-meta">
+        <span class="type-meta-name">Label</span>
+        <span class="type-meta-spec" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">Montserrat 200 · 10px</span>
+      </div>
+    </div>
+    <div class="type-row">
+      <span class="type-specimen" style="font-family:'DM Mono',monospace;font-size:14px;color:var(--gold);">~$35M / 24-MO CUMULATIVE</span>
+      <div class="type-meta">
+        <span class="type-meta-name">Data</span>
+        <span class="type-meta-spec" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">DM Mono 400 · 14px</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5b Typeface Cards -->
+  <div class="typeface-cards" data-reveal data-delay="2">
+    <div class="typeface-card">
+      <div class="tf-specimen" style="font-family:'Cormorant Garamond',serif;font-weight:300;">AaBbCcDdEeFf GgHhIiJjKk 0123456789</div>
+      <div>
+        <div class="tf-meta-name">Cormorant Garamond</div>
+        <div class="tf-meta-weights">300 · 400 · 600 · italic</div>
+        <div class="tf-meta-role">Display &amp; Narrative</div>
+      </div>
+    </div>
+    <div class="typeface-card">
+      <div class="tf-specimen" style="font-family:'Playfair Display',serif;font-weight:400;">AaBbCcDdEeFf GgHhIiJjKk 0123456789</div>
+      <div>
+        <div class="tf-meta-name">Playfair Display</div>
+        <div class="tf-meta-weights">400 · 700</div>
+        <div class="tf-meta-role">Editorial Authority</div>
+      </div>
+    </div>
+    <div class="typeface-card">
+      <div class="tf-specimen" style="font-family:'DM Mono',monospace;font-size:20px;">AaBbCcDdEeFf 0123456789 $%#</div>
+      <div>
+        <div class="tf-meta-name">DM Mono</div>
+        <div class="tf-meta-weights">400</div>
+        <div class="tf-meta-role">Numbers &amp; Data</div>
+      </div>
+    </div>
+    <div class="typeface-card">
+      <div class="tf-specimen" style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:22px;letter-spacing:0.08em;">AaBbCcDd EeFfGg 0123456789</div>
+      <div>
+        <div class="tf-meta-name">Montserrat</div>
+        <div class="tf-meta-weights">200 · 300 · 400</div>
+        <div class="tf-meta-role">Interface &amp; Labels</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5c Typographic Composition -->
+  <div data-reveal data-delay="3">
+    <div class="type-comp">
+      <div class="tc-label">Typographic Composition · System in Use</div>
+      <div class="tc-headline">Structure Before<br>Story.</div>
+      <div class="tc-subhead">The IAM Economic Framework</div>
+      <div class="tc-body">We do not manage careers. We engineer durable equity positions — structuring the business layer beneath the talent layer so that audience trust converts into something that compounds. The model is not complicated. The discipline is in the selection.</div>
+      <div class="tc-data">~$35M / 24-MO CUMULATIVE · PORTFOLIO AVERAGE · Q1 2026</div>
+      <div class="tc-caption">Los Angeles · New York · Managed by Obsidian Capital Partners</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 6 — VOICE & TONE
+══════════════════════════════════════════════ -->
+<section id="s6" data-section="6">
+  <span class="section-label" data-reveal>Voice &amp; Tone</span>
+
+  <!-- 6a Language Pairs -->
+  <div class="voice-grid" data-reveal data-delay="1">
+    <div class="voice-say">
+      <span class="voice-col-label">We Say</span>
+      <div class="voice-item">"We structure ownership."</div>
+      <div class="voice-item">"We model before we approach."</div>
+      <div class="voice-item">"The business funds its own growth."</div>
+      <div class="voice-item">"Talent is a founder, not a vendor."</div>
+      <div class="voice-item">"We arrive with a term sheet, not a pitch."</div>
+      <div class="voice-item">"The model is not complicated. The discipline is in the selection."</div>
+    </div>
+    <div class="voice-divider"></div>
+    <div class="voice-never">
+      <span class="voice-col-label">We Never Say</span>
+      <div class="voice-item">"Exciting opportunity"</div>
+      <div class="voice-item">"Going viral" / "Viral moment"</div>
+      <div class="voice-item">"Influencer" <em style="font-size:14px;opacity:0.6;">(as descriptor for our clients)</em></div>
+      <div class="voice-item">"Content creator" <em style="font-size:14px;opacity:0.6;">(as descriptor for our clients)</em></div>
+      <div class="voice-item">"Partnership" <em style="font-size:14px;opacity:0.6;">(as a standalone buzzword)</em></div>
+      <div class="voice-item">"Synergy" / "Ecosystem" / "Leverage" <em style="font-size:14px;opacity:0.6;">(without specificity)</em></div>
+    </div>
+  </div>
+
+  <!-- 6b Personality Spectrum -->
+  <div data-reveal data-delay="2">
+    <span class="section-label" style="margin-bottom:24px;">Personality Spectrum</span>
+    <div class="spectrum">
+      <div class="spectrum-row">
+        <span class="s-label">INSTITUTIONAL</span>
+        <div class="s-track">
+          <div class="s-fill" style="width:72%;"></div>
+          <div class="s-dot" style="left:72%;"></div>
+        </div>
+        <span class="s-label s-label-r">APPROACHABLE</span>
+      </div>
+      <div class="spectrum-row">
+        <span class="s-label">AUTHORITATIVE</span>
+        <div class="s-track">
+          <div class="s-fill" style="width:72%;"></div>
+          <div class="s-dot" style="left:72%;"></div>
+        </div>
+        <span class="s-label s-label-r">ACCESSIBLE</span>
+      </div>
+      <div class="spectrum-row">
+        <span class="s-label">DELIBERATE</span>
+        <div class="s-track">
+          <div class="s-fill" style="width:76%;"></div>
+          <div class="s-dot" style="left:76%;"></div>
+        </div>
+        <span class="s-label s-label-r">URGENT</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 7 — MOTION PRINCIPLES
+══════════════════════════════════════════════ -->
+<section id="s7" data-section="7">
+  <span class="section-label" data-reveal>Motion Principles</span>
+
+  <!-- 7a Timing Values -->
+  <div data-reveal data-delay="1">
+    <span class="section-label" style="margin-bottom:16px; font-size:9px;">Core Timing Values</span>
+    <table class="motion-table">
+      <tr><td>DURATION</td><td>Minimum 300ms · Preferred 400–700ms · Maximum 900ms</td></tr>
+      <tr><td>EASING</td><td>cubic-bezier(0.25, 0.46, 0.45, 0.94)  →  ease-out-quad</td></tr>
+      <tr><td>STAGGER</td><td>80–120ms between sequential elements</td></tr>
+      <tr><td>ENTRANCE</td><td>Opacity 0→1 + translateY(16px→0) only</td></tr>
+      <tr><td>EXIT</td><td>Opacity 1→0 only — no movement on exit</td></tr>
+      <tr><td>AVOID</td><td>scale(), rotate(), bounce, spring, elastic, skew</td></tr>
+    </table>
+  </div>
+
+  <!-- 7b Easing Curve Visualization -->
+  <div class="easing-viz" data-reveal data-delay="2">
+    <div class="easing-wrap">
+      <svg viewBox="0 0 290 290" width="290" height="290" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+        <!-- Grid lines -->
+        <line x1="45" y1="45" x2="45" y2="245" stroke="#2D2D2D" stroke-width="0.5"/>
+        <line x1="85" y1="45" x2="85" y2="245" stroke="#2D2D2D" stroke-width="0.5"/>
+        <line x1="125" y1="45" x2="125" y2="245" stroke="#2D2D2D" stroke-width="0.5"/>
+        <line x1="165" y1="45" x2="165" y2="245" stroke="#2D2D2D" stroke-width="0.5"/>
+        <line x1="205" y1="45" x2="205" y2="245" stroke="#2D2D2D" stroke-width="0.5"/>
+        <line x1="45" y1="85" x2="245" y2="85" stroke="#2D2D2D" stroke-width="0.5"/>
+        <line x1="45" y1="125" x2="245" y2="125" stroke="#2D2D2D" stroke-width="0.5"/>
+        <line x1="45" y1="165" x2="245" y2="165" stroke="#2D2D2D" stroke-width="0.5"/>
+        <line x1="45" y1="205" x2="245" y2="205" stroke="#2D2D2D" stroke-width="0.5"/>
+        <!-- Axes -->
+        <line x1="45" y1="45" x2="45" y2="248" stroke="#C8C8C0" stroke-width="0.5"/>
+        <line x1="42" y1="245" x2="248" y2="245" stroke="#C8C8C0" stroke-width="0.5"/>
+        <!-- cubic-bezier(0.25, 0.46, 0.45, 0.94) -->
+        <!-- P0=(45,245) CP1=(45+200*0.25, 245-200*0.46)=(95,153) CP2=(45+200*0.45,245-200*0.94)=(135,57) P1=(245,45) -->
+        <path d="M 45,245 C 95,153 135,57 245,45" fill="none" stroke="#F5F5F0" stroke-width="1.5"/>
+        <!-- Control handles -->
+        <line x1="45" y1="245" x2="95" y2="153" stroke="#C8C8C0" stroke-width="0.5" stroke-dasharray="4,4"/>
+        <line x1="245" y1="45" x2="135" y2="57" stroke="#C8C8C0" stroke-width="0.5" stroke-dasharray="4,4"/>
+        <!-- CP dots gold -->
+        <circle cx="95" cy="153" r="4" fill="#B8A882"/>
+        <circle cx="135" cy="57" r="4" fill="#B8A882"/>
+        <!-- P0 P1 dots -->
+        <circle cx="45" cy="245" r="3" fill="#C8C8C0"/>
+        <circle cx="245" cy="45" r="3" fill="#C8C8C0"/>
+        <!-- CP labels -->
+        <text x="100" y="150" fill="#B8A882" font-size="9" font-family="monospace">0.25, 0.46</text>
+        <text x="100" y="60" fill="#B8A882" font-size="9" font-family="monospace">0.45, 0.94</text>
+        <!-- Axis labels -->
+        <text x="35" y="249" fill="#C8C8C0" font-size="9" font-family="monospace" text-anchor="middle">0</text>
+        <text x="245" y="259" fill="#C8C8C0" font-size="9" font-family="monospace" text-anchor="middle">1</text>
+        <text x="31" y="49" fill="#C8C8C0" font-size="9" font-family="monospace" text-anchor="end">1</text>
+        <!-- Footer label -->
+        <text x="145" y="278" fill="#6A6A62" font-size="9" font-family="monospace" text-anchor="middle">ease-out-quad · cubic-bezier(0.25, 0.46, 0.45, 0.94)</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 7c Live Motion Demo -->
+  <div data-reveal data-delay="3">
+    <span class="section-label" style="margin-bottom:24px; font-size:9px;">Live Motion Demo — Interact with each element</span>
+    <div class="motion-demos">
+      <div class="md-card">
+        <div class="md-label">01 · Button State<br><span style="opacity:0.5;font-size:9px;">Hover to trigger</span></div>
+        <button class="demo-btn">VIEW MANDATE</button>
+      </div>
+      <div class="md-card">
+        <div class="md-label">02 · Card Elevation<br><span style="opacity:0.5;font-size:9px;">Hover to trigger</span></div>
+        <div class="demo-card-box"></div>
+      </div>
+      <div class="md-card">
+        <div class="md-label">03 · Text Reveal<br><span style="opacity:0.5;font-size:9px;">Click to trigger</span></div>
+        <button class="demo-trigger" id="reveal-trigger">REVEAL</button>
+        <div class="demo-reveal-text" id="reveal-text"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 8 — BRAND APPLICATIONS
+══════════════════════════════════════════════ -->
+<section id="s8" data-section="8">
+  <span class="section-label" data-reveal>Brand Applications</span>
+
+  <!-- 8a + 8b: Business Card & Memo -->
+  <div class="app-grid-2" style="margin-bottom:2px;">
+    <div class="app-panel" data-reveal data-delay="1">
+      <span class="app-panel-label">8a · Business Card — Hover to Flip</span>
+      <div class="bcard-scene">
+        <div class="bcard">
+          <div class="bcard-face bcard-front">
+            <div class="bcard-front-text">INTELLECTUAL ASSET<br>MANAGEMENT</div>
+          </div>
+          <div class="bcard-face bcard-back">
+            <div class="bcard-back-logo" data-logo="light"></div>
+            <div class="bcard-rule"></div>
+            <div class="bcard-name">Alexandra Chen</div>
+            <div class="bcard-contact">Managing Director<br>a.chen@iam.group<br>+1 (310) 000 0000</div>
+          </div>
+        </div>
+      </div>
+      <div class="bcard-hint">Hover to reveal back</div>
+    </div>
+    <div class="app-panel" data-reveal data-delay="2">
+      <span class="app-panel-label">8b · Memo Pad</span>
+      <div class="memo">
+        <div class="memo-header">Intellectual Asset Management</div>
+        <div class="memo-body">
+          <div class="memo-hed">Let's Do Some Business.</div>
+          <div class="memo-lines">
+            <div class="memo-line"></div>
+            <div class="memo-line"></div>
+            <div class="memo-line"></div>
+            <div class="memo-line"></div>
+            <div class="memo-line"></div>
+          </div>
+        </div>
+        <div class="memo-footer">Intellectual Asset Management · Managed by Obsidian Capital Partners</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8c + 8d: Email Signature & Deck Cover -->
+  <div class="app-grid-2" style="margin-bottom:2px;">
+    <div class="app-panel" data-reveal data-delay="1">
+      <span class="app-panel-label">8c · Email Signature</span>
+      <div class="esig">
+        <div class="esig-name">Marcus O. Williams</div>
+        <div class="esig-title">Partner, Talent Strategy</div>
+        <div class="esig-rule"></div>
+        <div class="esig-company">Intellectual Asset Management</div>
+        <div class="esig-loc">Los Angeles · New York</div>
+      </div>
+    </div>
+    <div class="app-panel" data-reveal data-delay="2">
+      <span class="app-panel-label">8d · Deck Cover Slide (16:9)</span>
+      <div class="deck">
+        <div class="deck-logo" data-logo="dark"></div>
+        <div class="deck-rule"></div>
+        <div class="deck-label">May 2026 · Strictly Confidential · Not for Distribution</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8e: Letterhead -->
+  <div class="app-panel" data-reveal data-delay="3" style="margin-bottom:0;">
+    <span class="app-panel-label">8e · Document Letterhead (A4 Proportions)</span>
+    <div class="lh-wrap">
+      <div class="lh">
+        <div class="lh-header">
+          <div class="lh-logo" data-logo="light"></div>
+          <div class="lh-address">
+            8484 Wilshire Blvd, Suite 1000<br>
+            Beverly Hills, CA 90211<br>
+            iam.group<br>
+            +1 (310) 000 0000
+          </div>
+        </div>
+        <div class="lh-content">
+          <div class="lh-content-inner">— correspondence area —</div>
+        </div>
+        <div class="lh-footer">Intellectual Asset Management · Los Angeles · New York · Managed by Obsidian Capital Partners</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 9 — GRAPHIC ELEMENTS
+══════════════════════════════════════════════ -->
+<section id="s9" data-section="9">
+  <span class="section-label" data-reveal>Graphic Elements &amp; Iconography</span>
+
+  <!-- 9a Triangle Motif -->
+  <div data-reveal data-delay="1">
+    <span class="section-label" style="margin-bottom:24px;font-size:9px;">Derived from the IAM Letterform · The Apex Mark</span>
+    <div class="triangle-motif">
+      <div class="tri-item">
+        <svg viewBox="0 0 16 16" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="8,2 2,14 14,14" fill="var(--text)"/>
+        </svg>
+        <span class="tri-label">16px</span>
+      </div>
+      <div class="tri-item">
+        <svg viewBox="0 0 32 32" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="16,4 4,28 28,28" fill="var(--text)"/>
+        </svg>
+        <span class="tri-label">32px</span>
+      </div>
+      <div class="tri-item">
+        <svg viewBox="0 0 64 64" width="64" height="64" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="32,8 8,56 56,56" fill="var(--text)"/>
+        </svg>
+        <span class="tri-label">64px</span>
+      </div>
+      <div style="margin-left:48px; max-width:360px;">
+        <p style="font-family:'Montserrat',sans-serif;font-weight:200;font-size:10px;color:var(--muted);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:12px;">The Apex Mark</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;color:var(--text);line-height:1.6;">Extracted from the triangular negative space of the "A" in IAM. Used as a standalone indicator of ascending value, progress, and selection at the apex.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9b Texture Application -->
+  <div data-reveal data-delay="2">
+    <span class="section-label" style="margin-bottom:24px;font-size:9px;">Architectural Texture · IAM Letterforms at 8% Opacity</span>
+    <div class="texture-panel">
+      <div class="texture-bg-svg">
+        <div data-logo="texture"></div>
+      </div>
+      <div class="texture-content">
+        <div class="tc-over-label">Strategic Positioning · Q2 2026</div>
+        <div class="tc-over-head">The Business of<br>Earned Trust.</div>
+        <div class="tc-over-body">When audience trust compounds over years, it behaves like equity. IAM's mandate is to structure the instruments that capture that value before it dissipates into campaign cycles and commission structures.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9c Icon System -->
+  <div data-reveal data-delay="3">
+    <span class="section-label" style="margin-bottom:24px;font-size:9px;">Derived Icon System · Geometric Line Language</span>
+    <div class="icons-grid">
+      <!-- Document -->
+      <div class="icon-item">
+        <svg viewBox="0 0 48 48" width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="4" width="28" height="40" rx="0.5" fill="none" stroke="currentColor" stroke-width="1"/>
+          <line x1="16" y1="18" x2="32" y2="18" stroke="currentColor" stroke-width="1"/>
+          <line x1="16" y1="25" x2="32" y2="25" stroke="currentColor" stroke-width="1"/>
+          <line x1="16" y1="32" x2="32" y2="32" stroke="currentColor" stroke-width="1"/>
+        </svg>
+        <span class="icon-label">Document</span>
+      </div>
+      <!-- Asset -->
+      <div class="icon-item">
+        <svg viewBox="0 0 48 48" width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="24" cy="31" r="12" fill="none" stroke="currentColor" stroke-width="1"/>
+          <line x1="24" y1="19" x2="24" y2="8" stroke="currentColor" stroke-width="1"/>
+          <polyline points="19,13 24,8 29,13" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="miter"/>
+        </svg>
+        <span class="icon-label">Asset</span>
+      </div>
+      <!-- Network -->
+      <div class="icon-item">
+        <svg viewBox="0 0 48 48" width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="24" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1"/>
+          <circle cx="8" cy="38" r="4" fill="none" stroke="currentColor" stroke-width="1"/>
+          <circle cx="40" cy="38" r="4" fill="none" stroke="currentColor" stroke-width="1"/>
+          <line x1="21" y1="12" x2="11" y2="34" stroke="currentColor" stroke-width="1"/>
+          <line x1="27" y1="12" x2="37" y2="34" stroke="currentColor" stroke-width="1"/>
+          <line x1="12" y1="38" x2="36" y2="38" stroke="currentColor" stroke-width="1"/>
+        </svg>
+        <span class="icon-label">Network</span>
+      </div>
+      <!-- Growth -->
+      <div class="icon-item">
+        <svg viewBox="0 0 48 48" width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="6,42 6,30 18,30 18,20 30,20 30,12 42,12" fill="none" stroke="currentColor" stroke-width="1"/>
+          <polyline points="36,12 42,12 42,18" fill="none" stroke="currentColor" stroke-width="1"/>
+          <line x1="6" y1="42" x2="42" y2="12" stroke="currentColor" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.4"/>
+        </svg>
+        <span class="icon-label">Growth</span>
+      </div>
+      <!-- Protection -->
+      <div class="icon-item">
+        <svg viewBox="0 0 48 48" width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24,4 L40,10 L40,26 C40,35 33,42 24,45 C15,42 8,35 8,26 L8,10 Z" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="miter"/>
+        </svg>
+        <span class="icon-label">Protection</span>
+      </div>
+      <!-- Partnership (interlocking rectangular rings) -->
+      <div class="icon-item">
+        <svg viewBox="0 0 48 48" width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+          <!-- Left rectangular ring -->
+          <rect x="4" y="16" width="22" height="16" fill="none" stroke="currentColor" stroke-width="1"/>
+          <!-- Right ring: top, right, bottom fully visible -->
+          <polyline points="26,16 44,16 44,32 26,32" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="miter"/>
+          <!-- Left ring appears in front: overdraw right ring left edge with bg -->
+          <line x1="26" y1="17" x2="26" y2="31" stroke="var(--bg-2)" stroke-width="2"/>
+          <!-- Redraw left ring right edge on top -->
+          <line x1="26" y1="16" x2="26" y2="32" stroke="currentColor" stroke-width="1"/>
+        </svg>
+        <span class="icon-label">Partnership</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 10 — CLOSING
+══════════════════════════════════════════════ -->
+<section id="s10" data-section="10">
+  <div class="cl-section-label" data-reveal>Closing</div>
+  <div class="cl-top-rule" data-reveal data-delay="1"></div>
+  <div class="cl-quote-main" data-reveal data-delay="2">
+    "A manager's job ends<br>when the deal is signed."
+  </div>
+  <div class="cl-gold-rule" data-reveal data-delay="3"></div>
+  <div class="cl-quote-sec" data-reveal data-delay="4">"IAM's job begins there."</div>
+  <div class="cl-meta" data-reveal data-delay="5">Los Angeles · New York · Managed by Obsidian Capital Partners</div>
+</section>
+
+<script>
+(function() {
+  /* ═══════════════════════════════════════════
+     IAM SVG LOGO — embedded once, injected everywhere
+  ═══════════════════════════════════════════════ */
+  const IAM_SVG = `<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1584 672" style="display:block;width:100%;height:auto;"><defs><style>.cls-1{fill:#fff}</style></defs><path d="M0,672V0h1584v672H0ZM511.72,148v272s56.28,0,56.28,0V148s-56.28,0-56.28,0ZM751.17,374.93l18.48,44.85,58.28-.09-121.67-267.77c-.7-2.88-2.21-3.99-4.83-3.78-1.34.11-2.62,1.95-3.24,4.26l-116.76,267.12,53.62.29,17.9-45.02,98.21.13ZM1055.8,301.56l.15,110.32-.16,7.97,53.69-.18.02-271.04c-3.57-1.34-5.57.26-8.06,3.04l-127.23,142-132-144.69c-.88-.97-4.74-.77-5.22-.1l-.02,270.86,53.56-.02-.11-123.54.45-21.03,77.24,91.63c1.9,2.25,6.02,4.82,8.61,1.76l78.64-93,.45,26.01ZM225.75,480.28h-7.17s.02,46.37.02,46.37h7.17s-.02-46.37-.02-46.37ZM275.48,527.73l.17-47.2-6.95.04.18,31.26-29.99-32.53-.09,47.34,6.83-.1-.14-31.09,29.98,32.29ZM304.63,526.43l-.1-39.55,13.72-.17-.69-6.15h-33.64s.07,6.25.07,6.25l13.49.06.05,39.8,7.09-.25ZM353.08,505.91l-.06-6.1-19.47-.1.05-12.97,21.95-.03-.02-6.21-29.02.12v45.96s29.99,0,29.99,0l-.16-6.35-22.75.1.04-14.4,19.44-.02ZM394.93,520.26h-21.26s0-39.74,0-39.74l-7.1.08.11,46.01,28.34.03-.09-6.38ZM431.79,520.24h-21.04s0-39.41,0-39.41l-7.07-.37.02,46.15h28.13s-.04-6.37-.04-6.37ZM467.27,505.95l-.07-6.09-19.47-.14.14-12.97,21.96-.08-.27-6.18-28.94.05.12,46.03,30.02.03v-6.32s-22.94.04-22.94.04l.04-14.39,19.4.02ZM514.54,512.99c-4.41,7.1-11.98,8.94-18.74,6.75-7.04-2.27-10.89-9.02-10.71-16.71s4.14-13.75,10.67-15.85,13.58-.13,18.45,5.85l4.7-4.55c-6.72-8.8-17.72-10.66-27.43-6.62-8.68,3.61-14.25,13.01-13.67,23.13.79,13.64,11.7,23.18,25.23,22.09,7.22-.58,13.25-3.87,16.86-10.53l-5.36-3.56ZM546.81,526.39l-.04-39.51,13.38-.12c.29-1.62.02-5.02-.73-6.22l-32.94-.03-.24,6.35,13.42.04.04,39.74,7.12-.24ZM575.58,480.58l-7.15.08.09,30.71c.03,9.41,7.43,15.28,16.44,15.78,9.96.56,18.34-5.81,18.36-16.16l.05-30.57-7.11.41.04,30.18c0,6.36-4.97,10.02-10.95,9.62-5.4-.36-9.7-3.78-9.71-9.63l-.05-30.43ZM640.04,519.64l2.59,6.95h7.51s-20.59-47.15-20.59-47.15l-19.82,47.18,7.01-.22,2.93-6.9,20.35.14ZM742.92,519.65l2.62,6.91,7.52.06-20.61-47.29-19.97,47.06,6.83.21,3.35-7.17,20.26.22ZM776.5,527.12c7.1-.54,11.73-5.12,12.52-10.69.86-6.14-1.68-11.36-7.32-14.14l-10.72-5.27c-3.42-1.68-4.47-7.05-1.34-9.36,3.81-2.82,8.6-1.59,11.58,2.62l5.33-3.46c-4.52-7.69-14.74-9.23-21.64-3.9-3.63,2.81-4.71,7.66-3.75,12.25.63,2.99,3.54,6.85,7.09,8.47l9.82,4.48c1.55.71,3.48,3.26,3.96,4.75s-.52,5.3-2.02,6.27c-5.38,3.49-13.07,1.28-16.04-5.09l-5.81,3.43c3.59,7.04,10.25,10.26,18.34,9.64ZM814.5,527.14c7.17-.38,11.88-5.03,12.72-10.71.88-5.97-1.78-11.49-7.49-14.19l-10.2-4.82c-3.28-1.55-5.12-6.35-2.25-9.22,3.4-3.41,9.06-2.51,11.94,2.13l5.47-3.54c-4.68-7.67-14.75-9.31-21.78-3.81-3.21,2.51-4.29,7.23-3.75,11.31.39,2.92,3.13,7.36,6.46,8.93l10.38,4.89c3.23,1.52,4.98,4.73,3.99,8.27-.69,2.48-3.84,4.45-6.96,4.46-4.76,0-7.66-1.84-10.53-6.21-1.46.49-4.34,2.02-5.68,3.01,3.37,7.16,9.87,9.92,17.67,9.51ZM895.56,526.46l-.03-39.62,13.42-.05v-6.31s-34.12.06-34.12.06l.1,6.29h13.5s0,39.72,0,39.72l7.12-.09ZM978.02,496.93l.21,29.69h6.65s-.04-47.15-.04-47.15l-22.33,26.47-22.58-26.52-.07,47.22h6.82s.23-29.35.23-29.35l15.73,18.35,15.38-18.71ZM1023.4,519.52l3,7.17,7.23-.35-20.41-46.98-19.83,47,6.92.26,2.79-6.99,20.31-.11ZM1078.51,527.47l.28-46.98-6.84.05.08,31.08-30.06-32.18-.08,47.21,6.69-.1.19-30.35,29.73,31.27ZM1117.15,519.59l2.85,7.14,7.38-.33-20.55-47.09-19.85,47.25,7.01-.08,3.03-6.89h20.14ZM1166.87,509.67l-.37,7.86c-7.62,4.62-17.64,4.72-23.78-2.34-5.57-6.39-5.51-16.95,0-23.43,6.26-7.39,17.07-6.95,23.84-.76l4.52-4.82c-7.6-7.13-18.46-8.28-27.57-3.52-8.25,4.31-13.09,13.63-11.96,23.77,1.26,11.32,9.87,19.87,21.42,20.65,7.48.5,14.36-1.36,20.27-6.18l.16-17.27-18.63-.02.05,5.96,12.06.11ZM1191.89,505.83l19.71.09-.13-6.09-19.66-.07.05-13.02,22.12.04-.28-6.26-28.89.12v45.93s30.14.04,30.14.04v-6.36s-23.07.04-23.07.04l.02-14.47ZM1263,496.79l.19,29.85h6.71s-.07-47.25-.07-47.25l-22.43,26.65-22.51-26.64v47.26s6.84-.02,6.84-.02l.19-29.35,15.4,18.53,15.68-19.04ZM1309.18,505.98l-.06-6.16-19.55-.05.03-13.03,21.93.05-.09-6.24-28.93-.05.02,46.06,29.98.06.03-6.3h-22.92s.02-14.46.02-14.46l19.54.12ZM1359.33,527.83l.27-47.3-6.93.05.06,31.17-29.94-32.43-.15,47.32,6.89-.14-.22-30.77,30.01,32.09ZM1388.46,526.54l-.04-39.7,13.56-.03-.41-6.28-33.83.02.15,6.31h13.43s.04,39.71.04,39.71l7.1-.03ZM686.69,520.26l-21.44-.04.02-39.46-7.06.1.04,45.76,28.31-.03.13-6.34ZM864.15,505.95l-.04-6.11-19.39-.09.09-13.01h21.92s-.02-6.15-.02-6.15h-29.03s.07,46.04.07,46.04l29.78-.04.15-6.33-22.91.05-.02-14.41,19.41.05Z"/><g><polygon class="cls-1" points="1263 496.79 1247.32 515.83 1231.91 497.3 1231.73 526.65 1224.87 526.67 1224.89 479.4 1247.4 506.04 1269.83 479.39 1269.9 526.63 1263.19 526.65 1263 496.79"/><polygon class="cls-1" points="978.02 496.93 962.63 515.64 946.9 497.29 946.67 526.64 939.85 526.64 939.92 479.42 962.5 505.94 984.84 479.47 984.88 526.63 978.23 526.62 978.02 496.93"/><polygon class="cls-1" points="1078.51 527.47 1048.78 496.2 1048.58 526.55 1041.89 526.65 1041.98 479.44 1072.03 511.62 1071.95 480.54 1078.79 480.49 1078.51 527.47"/><polygon class="cls-1" points="275.48 527.73 245.5 495.45 245.63 526.54 238.8 526.63 238.89 479.29 268.88 511.83 268.69 480.57 275.65 480.53 275.48 527.73"/><polygon class="cls-1" points="1359.33 527.83 1329.32 495.74 1329.55 526.51 1322.65 526.65 1322.8 479.33 1352.74 511.76 1352.68 480.58 1359.61 480.53 1359.33 527.83"/><path class="cls-1" d="M1166.87,509.67l-12.06-.11-.05-5.96,18.63.02-.16,17.27c-5.91,4.83-12.79,6.69-20.27,6.18-11.55-.78-20.16-9.33-21.42-20.65-1.13-10.14,3.72-19.46,11.96-23.77,9.1-4.76,19.97-3.62,27.57,3.52l-4.52,4.82c-6.78-6.19-17.58-6.63-23.84.76-5.5,6.49-5.56,17.04,0,23.43,6.15,7.06,16.16,6.96,23.78,2.34l.37-7.86Z"/><polygon class="cls-1" points="1309.18 505.98 1289.64 505.86 1289.62 520.31 1312.53 520.32 1312.5 526.62 1282.53 526.56 1282.51 480.5 1311.44 480.55 1311.53 486.8 1289.6 486.75 1289.57 499.78 1309.12 499.83 1309.18 505.98"/><polygon class="cls-1" points="467.27 505.95 447.87 505.93 447.83 520.32 470.76 520.27 470.77 526.6 440.75 526.57 440.63 480.54 469.57 480.49 469.84 486.67 447.88 486.75 447.74 499.72 467.2 499.86 467.27 505.95"/><polygon class="cls-1" points="353.08 505.91 333.63 505.94 333.6 520.33 356.35 520.24 356.51 526.59 326.51 526.59 326.52 480.62 355.54 480.5 355.55 486.72 333.6 486.75 333.55 499.72 353.02 499.82 353.08 505.91"/><path class="cls-1" d="M575.58,480.58l.05,30.43c0,5.85,4.31,9.27,9.71,9.63,5.98.4,10.96-3.26,10.95-9.62l-.04-30.18,7.11-.41-.05,30.57c-.02,10.36-8.4,16.72-18.36,16.16-9-.5-16.41-6.37-16.44-15.78l-.09-30.71,7.15-.08Z"/><polygon class="cls-1" points="1191.89 505.83 1191.88 520.3 1214.94 520.26 1214.94 526.61 1184.82 526.57 1184.81 480.64 1213.7 480.52 1213.98 486.78 1191.87 486.74 1191.82 499.76 1211.47 499.84 1211.6 505.92 1191.89 505.83"/><polygon class="cls-1" points="864.15 505.95 844.74 505.9 844.76 520.31 867.68 520.25 867.53 526.58 837.75 526.62 837.68 480.59 866.71 480.58 866.73 486.75 844.81 486.74 844.72 499.75 864.11 499.84 864.15 505.95"/><path class="cls-1" d="M514.54,512.99l5.36,3.56c-3.61,6.66-9.64,9.95-16.86,10.53-13.53,1.09-24.45-8.45-25.23-22.09-.58-10.12,4.99-19.52,13.67-23.13,9.71-4.04,20.71-2.18,27.43,6.62l-4.7,4.55c-4.87-5.99-11.71-8.02-18.45-5.85s-10.49,8.54-10.67,15.85c-.19,7.69,3.67,14.44,10.71,16.71,6.76,2.18,14.33.35,18.74-6.75Z"/><path class="cls-1" d="M742.92,519.65l-20.26-.22-3.35,7.17-6.83-.21,19.97-47.06,20.61,47.29-7.52-.06-2.62-6.91ZM740.13,513.34l-7.72-19.14-7.43,19.23,15.15-.09Z"/><path class="cls-1" d="M1117.15,519.59h-20.14s-3.03,6.89-3.03,6.89l-7.01.08,19.85-47.25,20.55,47.09-7.38.33-2.85-7.14ZM1114.63,513.52l-7.75-19.14-7.48,19.07,15.24.08Z"/><path class="cls-1" d="M640.04,519.64l-20.35-.14-2.93,6.9-7.01.22,19.82-47.18,20.59,47.15h-7.51s-2.59-6.96-2.59-6.96ZM637.25,513.46l-7.59-18.97-7.46,18.97h15.05Z"/><path class="cls-1" d="M1023.4,519.52l-20.31.11-2.79,6.99-6.92-.26,19.83-47,20.41,46.98-7.23.35-3-7.17ZM1020.87,513.38l-7.59-18.99-7.54,19.04,15.13-.05Z"/><path class="cls-1" d="M776.5,527.12c-8.09.61-14.75-2.61-18.34-9.64l5.81-3.43c2.97,6.37,10.66,8.59,16.04,5.09,1.5-.98,2.5-4.78,2.02-6.27s-2.41-4.04-3.96-4.75l-9.82-4.48c-3.54-1.62-6.46-5.47-7.09-8.47-.96-4.58.11-9.44,3.75-12.25,6.9-5.33,17.12-3.79,21.64,3.9l-5.33,3.46c-2.98-4.22-7.77-5.44-11.58-2.62-3.13,2.32-2.08,7.68,1.34,9.36l10.72,5.27c5.65,2.78,8.19,8,7.32,14.14-.79,5.57-5.42,10.16-12.52,10.69Z"/><path class="cls-1" d="M814.5,527.14c-7.8.41-14.3-2.35-17.67-9.51,1.34-1,4.22-2.52,5.68-3.01,2.87,4.37,5.76,6.21,10.53,6.21,3.11,0,6.26-1.98,6.96-4.46.99-3.53-.76-6.74-3.99-8.27l-10.38-4.89c-3.33-1.57-6.07-6.01-6.46-8.93-.54-4.08.54-8.8,3.75-11.31,7.03-5.51,17.1-3.86,21.78,3.81l-5.47,3.54c-2.88-4.64-8.54-5.54-11.94-2.13-2.86,2.87-1.03,7.67,2.25,9.22l10.2,4.82c5.71,2.7,8.37,8.22,7.49,14.19-.84,5.68-5.56,10.33-12.72,10.71Z"/><polygon class="cls-1" points="895.56 526.46 888.44 526.56 888.44 486.84 874.94 486.84 874.83 480.55 908.95 480.49 908.96 486.79 895.54 486.85 895.56 526.46"/><polygon class="cls-1" points="304.63 526.43 297.54 526.68 297.49 486.88 284 486.82 283.92 480.55 317.56 480.57 318.25 486.71 304.53 486.88 304.63 526.43"/><path class="cls-1" d="M546.81,526.39l-7.12.24-.04-39.74-13.42-.04.24-6.35,32.94.03c.75,1.2,1.02,4.6.73,6.22l-13.38.12.04,39.51Z"/><polygon class="cls-1" points="1388.46 526.54 1381.37 526.57 1381.33 486.87 1367.9 486.87 1367.75 480.55 1401.58 480.53 1401.99 486.82 1388.42 486.84 1388.46 526.54"/><polygon class="cls-1" points="394.93 520.26 395.01 526.63 366.67 526.61 366.56 480.6 373.67 480.52 373.67 520.26 394.93 520.26"/><polygon class="cls-1" points="686.69 520.26 686.56 526.6 658.25 526.63 658.21 480.86 665.27 480.76 665.25 520.22 686.69 520.26"/><polygon class="cls-1" points="431.79 520.24 431.82 526.61 403.69 526.61 403.67 480.46 410.74 480.83 410.75 520.24 431.79 520.24"/><rect class="cls-1" x="218.59" y="480.28" width="7.17" height="46.37"/><polygon points="740.13 513.34 724.98 513.43 732.42 494.2 740.13 513.34"/><polygon points="1114.63 513.52 1099.39 513.45 1106.87 494.38 1114.63 513.52"/><polygon points="637.25 513.46 622.2 513.45 629.66 494.48 637.25 513.46"/><polygon points="1020.87 513.38 1005.74 513.43 1013.28 494.39 1020.87 513.38"/></g><g><g><path class="cls-1" d="M1057.3,301.52l-.45-26.01-78.64,93c-2.59,3.06-6.71.49-8.61-1.76l-77.24-91.63-.45,21.03.11,123.54-53.56.02.02-270.86c.48-.67,4.34-.87,5.22.1l132,144.69,127.23-142c2.49-2.78,4.49-4.38,8.06-3.04l-.02,271.04-53.69.18.16-7.97-.15-110.32ZM1059.12,269.54l.29,148.24,49.36-.15-.06-268.91-132.97,148.1-135.13-147.96-.12,268.77,49.26.16.02-149.09,81.81,97.03c.83.99,2.36,2.06,3.22,1.95.69-.09,2.32-1.11,2.84-1.73l81.47-96.41Z"/><path d="M1059.12,269.54l-81.47,96.41c-.53.62-2.15,1.64-2.84,1.73-.86.11-2.38-.96-3.22-1.95l-81.81-97.03-.02,149.09-49.26-.16.12-268.77,135.13,147.96,132.97-148.1.06,268.91-49.36.15-.29-148.24Z"/></g><g><path class="cls-1" d="M752.67,374.9l-98.21-.13-17.9,45.02-53.62-.29,116.76-267.12c.62-2.31,1.9-4.15,3.24-4.26,2.62-.22,4.13.89,4.83,3.78l121.67,267.77-58.28.09-18.35-44.85ZM746.83,372.93l7.5-.09,18.35,44.95,53.29-.24-122.17-268.86-117.49,268.96,48.68.07,17.83-45.06,15.75.21,78.27.06Z"/><path class="cls-1" d="M513.21,147.97h56.29s0,272,0,272h-56.29s0-272,0-272ZM515.37,149.97v268h52.13V149.97h-52.13Z"/><path d="M746.83,372.93l-78.27-.06-15.75-.21-17.83,45.06-48.68-.07,117.49-268.96,122.17,268.86-53.29.24-18.35-44.95-7.5.09ZM737.34,330.18l-34.23-84-33.72,84.02,67.95-.02Z"/><rect x="515.37" y="149.97" width="52.13" height="268"/><path class="cls-1" d="M737.34,330.18l-67.95.02,33.72-84.02,34.23,84ZM733.92,327.94l-30.78-75.78-30.41,75.86,61.19-.09Z"/><polygon points="733.92 327.94 672.73 328.02 703.14 252.16 733.92 327.94"/></g></g></svg>`;
+
+  /* ─── Inject logos ─── */
+  document.querySelectorAll('[data-logo]').forEach(el => {
+    const variant = el.getAttribute('data-logo');
+    el.innerHTML = IAM_SVG;
+    const svg = el.querySelector('svg');
+    if (!svg) return;
+    svg.removeAttribute('id');
+    svg.style.display = 'block';
+    svg.style.width = '100%';
+    svg.style.height = 'auto';
+
+    if (variant === 'light') {
+      svg.style.filter = 'invert(1) sepia(0.08)';
+    } else if (variant === 'prohibited-stretch') {
+      svg.style.transformOrigin = 'center';
+      svg.style.transform = 'scaleX(1.4)';
+    } else if (variant === 'prohibited-shadow') {
+      svg.style.filter = 'drop-shadow(0 6px 12px rgba(245,245,240,0.45))';
+    } else if (variant === 'prohibited-rotate') {
+      svg.style.transformOrigin = 'center';
+      svg.style.transform = 'rotate(45deg) scale(0.65)';
+    } else if (variant === 'texture') {
+      svg.style.width = '100%';
+      svg.style.opacity = '1';
+    }
+  });
+
+  /* ─── Sidebar ─── */
+  const sections = Array.from(document.querySelectorAll('section[data-section]'));
+  const sectionNames = ['Cover','Philosophy','Logo System','Color','Typography','Voice & Tone','Motion','Applications','Graphic Elements','Closing'];
+  const sidebar = document.getElementById('sidebar');
+
+  sections.forEach((sec, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'nav-dot-wrap';
+    wrap.innerHTML = `<div class="nav-dot"></div><div class="nav-tooltip">${String(i+1).padStart(2,'0')} ${sectionNames[i]}</div>`;
+    wrap.addEventListener('click', () => sec.scrollIntoView({ behavior: 'smooth' }));
+    sidebar.appendChild(wrap);
+  });
+
+  /* ─── Nav active tracking ─── */
+  const navObs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = parseInt(entry.target.dataset.section) - 1;
+        document.querySelectorAll('.nav-dot-wrap').forEach((d, i) => d.classList.toggle('active', i === idx));
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(s => navObs.observe(s));
+
+  /* ─── Scroll reveals ─── */
+  const revObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('[data-reveal]').forEach(el => revObs.observe(el));
+
+  /* ─── Theme toggle ─── */
+  const toggle = document.getElementById('theme-toggle');
+  toggle.addEventListener('click', () => {
+    const isLight = document.documentElement.dataset.theme === 'light';
+    document.documentElement.dataset.theme = isLight ? 'dark' : 'light';
+    toggle.textContent = isLight ? 'LIGHT MODE' : 'DARK MODE';
+  });
+
+  /* ─── Color swatch copy ─── */
+  document.querySelectorAll('.swatch').forEach(sw => {
+    sw.addEventListener('click', () => {
+      const hex = sw.dataset.hex;
+      if (!hex) return;
+      navigator.clipboard.writeText(hex).then(() => {
+        sw.classList.add('copied');
+        setTimeout(() => sw.classList.remove('copied'), 1600);
+      }).catch(() => {});
+    });
+  });
+
+  /* ─── Mobile nav ─── */
+  document.getElementById('mob-toggle').addEventListener('click', () => {
+    document.getElementById('mob-nav').classList.add('open');
+  });
+  document.getElementById('mob-close').addEventListener('click', () => {
+    document.getElementById('mob-nav').classList.remove('open');
+  });
+  document.querySelectorAll('.mob-nav-link').forEach(l => {
+    l.addEventListener('click', () => document.getElementById('mob-nav').classList.remove('open'));
+  });
+
+  /* ─── Motion demo: text reveal ─── */
+  const revealTrigger = document.getElementById('reveal-trigger');
+  const revealText = document.getElementById('reveal-text');
+  if (revealTrigger && revealText) {
+    const words = 'Talent is a founder, not a vendor.'.split(' ');
+    revealText.innerHTML = words.map((w, i) =>
+      `<span style="opacity:0;transition:opacity 500ms cubic-bezier(0.25,0.46,0.45,0.94) ${i * 90}ms;display:inline;">${w}&nbsp;</span>`
+    ).join('');
+
+    let revealed = false;
+    revealTrigger.addEventListener('click', () => {
+      if (!revealed) {
+        revealText.querySelectorAll('span').forEach(s => s.style.opacity = '1');
+        revealed = true;
+        revealTrigger.textContent = 'RESET';
+      } else {
+        revealText.querySelectorAll('span').forEach(s => s.style.opacity = '0');
+        revealed = false;
+        revealTrigger.textContent = 'REVEAL';
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>
